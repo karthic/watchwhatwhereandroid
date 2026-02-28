@@ -8,3 +8,5 @@ local.properties
 temp/
 .vscode/
 google-services.json
+watchwhatwhere.keystore
+proguard-rules.pro
