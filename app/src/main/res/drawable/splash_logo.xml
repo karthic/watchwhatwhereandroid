@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- 4 circles in Venn diagram arrangement, overlapping to create center -->
+    <!-- Top circle (centered at 54, 42) - closer to center -->
+    <path
+        android:pathData="M54,42m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"/>
+    
+    <!-- Right circle (centered at 66, 54) - closer to center -->
+    <path
+        android:pathData="M66,54m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"/>
+    
+    <!-- Bottom circle (centered at 54, 66) - closer to center -->
+    <path
+        android:pathData="M54,66m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"/>
+    
+    <!-- Left circle (centered at 42, 54) - closer to center -->
+    <path
+        android:pathData="M42,54m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"/>
+    
+</vector>

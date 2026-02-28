@@ -1,0 +1,2082 @@
+{
+  "app": {
+    "description": "Application metadata and store links",
+    "name": "WatchWhatWhere",
+    "version": "1.0.3",
+    "minVersion": "1.0.0",
+    "baseUrl": "https://watchwhatwhere.com",
+    "updateUrl": "https://watchwhatwhere.com/mobileconfig.json",
+    "appStoreUrl": "",
+    "playStoreUrl": "",
+    "contactEmail": "",
+    "privacyPolicyUrl": "https://watchwhatwhere.com/privacy",
+    "termsOfServiceUrl": "https://watchwhatwhere.com/tos"
+  },
+  "auth": {
+    "description": "Authentication configuration for OAuth providers and session management",
+    "redirectUri": "/",
+    "redirectUriAndroid": "myapp://auth",
+    "sessionCookieName": "loginname",
+    "loginEndpoint": {
+      "description": "Server endpoint for all login/session operations",
+      "url": "/inputs/getdata.php",
+      "params": {
+        "func": "login",
+        "do": "get"
+      },
+      "sessionCheck": {
+        "description": "Check existing session — send with no extra params",
+        "responseField": "myinfo",
+        "notes": "Response also includes provider preferences (prio/hide) so app can apply them immediately on login."
+      },
+      "providerParams": {
+        "google": [
+          "provider",
+          "accesstoken"
+        ],
+        "facebook": [
+          "provider",
+          "fb_id",
+          "fb_name",
+          "fb_email",
+          "fb_picture",
+          "fb_token"
+        ],
+        "microsoft": [
+          "provider",
+          "ms_id",
+          "ms_name",
+          "ms_email",
+          "ms_token"
+        ],
+        "discord": [
+          "provider",
+          "accesstoken"
+        ]
+      }
+    },
+    "providers": [
+      {
+        "id": "google",
+        "description": "Google OAuth2 Authorization Code flow with server redirect",
+        "enabled": true,
+        "clientIdWeb": "1062416956606-bqnic83qs3knun983kahmkea8m82u8n4.apps.googleusercontent.com",
+        "clientIdAndroid": "1062416956606-8rtb5ruefd72ml87s1lcdkkqsh0keo94.apps.googleusercontent.com",
+        "authUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "scopes": [
+          "openid",
+          "email",
+          "profile"
+        ],
+        "responseType": "code",
+        "statePrefix": "google:",
+        "extraParams": {
+          "access_type": "online",
+          "prompt": "select_account"
+        },
+        "flowType": "redirect"
+      },
+      {
+        "id": "facebook",
+        "description": "Facebook Login via Facebook JS SDK",
+        "enabled": true,
+        "appId": "1255053839334994",
+        "sdkVersion": "v25.0",
+        "scopes": [
+          "email",
+          "public_profile"
+        ],
+        "graphFields": "id,name,email,picture.width(200)",
+        "statePrefix": "facebook:",
+        "flowType": "popup"
+      },
+      {
+        "id": "microsoft",
+        "description": "Microsoft MSAL.js redirect flow (popup blocked by COOP headers)",
+        "enabled": true,
+        "clientIdWeb": "5ecbbfce-36d7-4fb4-91fd-457b6ba44fc3",
+        "clientIdAndroid": "fc098389-3f7a-47c0-b0ac-e5bbe58651af",
+        "tenantId": "2c256477-15ac-408f-a3fa-bfd3b5fba747",
+        "objectId": "a9b2e447-6bad-49a7-bf4d-6d2f118f6f30",
+        "authority": "https://login.microsoftonline.com/common",
+        "knownAuthorities": [
+          "login.microsoftonline.com"
+        ],
+        "scopes": [
+          "openid",
+          "profile",
+          "email",
+          "User.Read"
+        ],
+        "msalVersion": "2.38.0",
+        "cacheLocation": "sessionStorage",
+        "storeAuthStateInCookie": true,
+        "flowType": "redirect",
+        "notes": "Uses sessionStorage for MSAL cache. Requires clearMsalState() on logout to prevent stale authority errors."
+      },
+      {
+        "id": "discord",
+        "description": "Discord OAuth2 Authorization Code flow with server redirect",
+        "enabled": true,
+        "clientIdWeb": "1472675384414834850",
+        "clientIdAndroid": "1474590992706568222",
+        "publicKey": "680e2430c81213a4cb5f98ecf11a46d27f4a97aca1ce55c6f84e66cc671303c5",
+        "authUrl": "https://discord.com/oauth2/authorize",
+        "scopes": [
+          "identify",
+          "email"
+        ],
+        "responseType": "code",
+        "statePrefix": "discord:",
+        "flowType": "redirect"
+      }
+    ]
+  },
+  "api": {
+    "description": "API configuration for all data endpoints. GET endpoints return JSON files. POST endpoints send form data to the postEndpoint.",
+    "postEndpoint": "/inputs/getdata.php",
+    "postContentType": "application/x-www-form-urlencoded",
+    "credentialsMode": "include",
+    "paginationSize": 100,
+    "endpoints": {
+      "home": {
+        "description": "Homepage data — featured content rows",
+        "method": "GET",
+        "url": "/jsonc/home"
+      },
+      "browse": {
+        "description": "Browse titles by type and optional genre with pagination",
+        "method": "GET",
+        "urlPattern": "/jsonc/type/{type}/{genre?}/{offset?}",
+        "offsetSize": 100
+      },
+      "title": {
+        "description": "Full title detail — metadata, cast, videos, watch providers, reviews",
+        "method": "GET",
+        "urlPattern": "/jsonc/title/{titleId}",
+        "responseFields": [
+          "id",
+          "nama",
+          "oldname",
+          "typa",
+          "imdbid",
+          "rating",
+          "data",
+          "genres",
+          "princ",
+          "videos",
+          "episodes",
+          "episodeinfo",
+          "maintitle",
+          "prods",
+          "colls",
+          "rec",
+          "sim",
+          "reviews",
+          "watchurls"
+        ]
+      },
+      "artist": {
+        "description": "Artist detail — biography, filmography",
+        "method": "GET",
+        "urlPattern": "/jsonc/artist/{artistId}",
+        "responseFields": [
+          "id",
+          "nama",
+          "oldname",
+          "imdbid",
+          "data",
+          "princ"
+        ]
+      },
+      "providerList": {
+        "description": "List of all streaming providers with metadata",
+        "method": "GET",
+        "url": "/dumpeddata/providers.json"
+      },
+      "providerTitles": {
+        "description": "Browse titles available on a specific streaming provider",
+        "method": "GET",
+        "urlPattern": "/jsonc/prov/{source}/{genre?}/{offset?}",
+        "offsetSize": 100
+      },
+      "prodCompany": {
+        "description": "Browse titles from a specific production company",
+        "method": "GET",
+        "urlPattern": "/jsonc/prod/{companyId}/{offset?}",
+        "offsetSize": 100
+      },
+      "search": {
+        "description": "Search titles and artists by query",
+        "method": "POST",
+        "requiresAuth": false,
+        "params": {
+          "func": "search",
+          "do": "get",
+          "q": null
+        }
+      },
+      "tag": {
+        "description": "Get, set, or remove user interaction tags on a title",
+        "method": "POST",
+        "requiresAuth": true,
+        "params": {
+          "func": "tag",
+          "do": null,
+          "titleid": null,
+          "tag": null
+        },
+        "doValues": [
+          "get",
+          "put",
+          "del"
+        ],
+        "tagValues": [
+          "vote",
+          "list",
+          "seen",
+          "star",
+          "share"
+        ],
+        "extraParams": {
+          "vote": {
+            "vote": [
+              "up",
+              "down"
+            ]
+          },
+          "star": {
+            "star": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        },
+        "notes": "do:get returns all tags for a title (no tag param needed). vote tag requires extra 'vote' param. star tag requires extra 'star' param."
+      },
+      "review": {
+        "description": "Get, submit, or delete a user review for a title",
+        "method": "POST",
+        "requiresAuth": true,
+        "params": {
+          "func": "review",
+          "do": null,
+          "titleid": null
+        },
+        "optionalParams": [
+          "content"
+        ],
+        "doValues": [
+          "get",
+          "put",
+          "del"
+        ],
+        "maxContentLength": 5000,
+        "notes": "content param required for do:put, ignored for get/del"
+      },
+      "userlist": {
+        "description": "Manage user custom share lists",
+        "method": "POST",
+        "requiresAuth": true,
+        "params": {
+          "func": "userlist",
+          "do": null,
+          "dowhat": null
+        },
+        "doValues": [
+          "get",
+          "put",
+          "del"
+        ],
+        "dowhatActions": {
+          "get": {
+            "getlists": {
+              "description": "Get all user lists",
+              "responseFields": {
+                "lists": [
+                  "id",
+                  "nama",
+                  "privacy",
+                  "hash"
+                ]
+              }
+            },
+            "getitems": {
+              "description": "Get items in a list",
+              "params": [
+                "listid"
+              ],
+              "responseFields": {
+                "items": [
+                  "id",
+                  "nama",
+                  "startYear",
+                  "poster_path_small",
+                  "poster_path"
+                ]
+              }
+            }
+          },
+          "put": {
+            "createlist": {
+              "description": "Create a new list",
+              "params": [
+                "nama",
+                "privacy"
+              ]
+            },
+            "copyitems": {
+              "description": "Copy items from a source list",
+              "params": [
+                "listid",
+                "source"
+              ]
+            },
+            "updateprivacy": {
+              "description": "Update list privacy",
+              "params": [
+                "listid",
+                "privacy"
+              ]
+            },
+            "renamelist": {
+              "description": "Rename a list",
+              "params": [
+                "listid",
+                "nama"
+              ]
+            },
+            "reorderlist": {
+              "description": "Reorder list items",
+              "params": [
+                "listid",
+                "order"
+              ]
+            },
+            "setdefaultshare": {
+              "description": "Set default share list",
+              "params": [
+                "listid"
+              ]
+            }
+          },
+          "del": {
+            "emptylist": {
+              "description": "Remove all items from a list",
+              "params": [
+                "listid"
+              ]
+            },
+            "dellist": {
+              "description": "Delete a list",
+              "params": [
+                "listid"
+              ]
+            },
+            "delitem": {
+              "description": "Remove a title from a list",
+              "params": [
+                "listid",
+                "titleid"
+              ]
+            }
+          }
+        }
+      },
+      "viewlist": {
+        "description": "View a public shared list by hash",
+        "method": "POST",
+        "requiresAuth": false,
+        "params": {
+          "func": "viewlist",
+          "do": "get",
+          "hash": null
+        },
+        "responseFields": {
+          "items": [
+            "id",
+            "nama",
+            "startYear",
+            "poster_path_small",
+            "poster_path"
+          ]
+        }
+      },
+      "provpref": {
+        "description": "Get or set user streaming provider preferences",
+        "method": "POST",
+        "requiresAuth": true,
+        "params": {
+          "func": "provpref",
+          "do": null
+        },
+        "doValues": [
+          "get",
+          "put",
+          "del"
+        ],
+        "getResponseFields": {
+          "success": "boolean",
+          "prefs": "object (source -> status)"
+        },
+        "putParams": [
+          "source",
+          "status"
+        ],
+        "delParams": [
+          "source"
+        ],
+        "statusValues": [
+          "prio",
+          "hide"
+        ],
+        "notes": "do:get returns all prefs as {source: status} map. prio = prioritize provider, hide = hide provider. del resets to default (show). Profile page resyncs prefs via do:get each time the providers tab loads."
+      },
+      "titlefreewatch": {
+        "description": "Get free watch URLs for a title",
+        "method": "POST",
+        "requiresAuth": false,
+        "params": {
+          "func": "titlefreewatch",
+          "do": "get",
+          "titleid": null
+        }
+      },
+      "title_reviews": {
+        "description": "Get all reviews for a title",
+        "method": "POST",
+        "requiresAuth": false,
+        "params": {
+          "func": "title_reviews",
+          "do": "get",
+          "titleid": null
+        }
+      },
+      "profile": {
+        "description": "Get or manage user profile and tagged title lists",
+        "method": "POST",
+        "requiresAuth": true,
+        "params": {
+          "func": "profile",
+          "do": null,
+          "dowhat": null
+        },
+        "doValues": [
+          "get",
+          "del"
+        ],
+        "dowhatActions": {
+          "get": {
+            "getprofile": {
+              "description": "Get user profile data"
+            },
+            "updateprofile": {
+              "description": "Update profile",
+              "params": [
+                "profilename"
+              ],
+              "optionalParams": [
+                "profileimage"
+              ]
+            },
+            "watchlist": {
+              "description": "Get titles on user's watchlist (paginated)",
+              "params": [
+                "page"
+              ],
+              "responseFields": {
+                "success": "boolean",
+                "items": [
+                  "id",
+                  "tag_data",
+                  "nama",
+                  "typa",
+                  "startYear",
+                  "poster_path_small",
+                  "poster_path"
+                ],
+                "page": "number",
+                "total": "number",
+                "hasMore": "boolean"
+              }
+            },
+            "seenlist": {
+              "description": "Get titles on user's seen list (paginated)",
+              "params": [
+                "page"
+              ],
+              "responseFields": {
+                "success": "boolean",
+                "items": [
+                  "id",
+                  "tag_data",
+                  "nama",
+                  "typa",
+                  "startYear",
+                  "poster_path_small",
+                  "poster_path"
+                ],
+                "page": "number",
+                "total": "number",
+                "hasMore": "boolean"
+              }
+            },
+            "rated": {
+              "description": "Get titles user has voted on (paginated)",
+              "params": [
+                "page"
+              ],
+              "responseFields": {
+                "success": "boolean",
+                "items": [
+                  "id",
+                  "tag_data",
+                  "nama",
+                  "typa",
+                  "startYear",
+                  "poster_path_small",
+                  "poster_path",
+                  "star_rating"
+                ],
+                "page": "number",
+                "total": "number",
+                "hasMore": "boolean"
+              },
+              "notes": "tag_data contains vote direction (up/down). star_rating is a separate numeric field (1-5) if user has star-rated the title."
+            },
+            "reviews": {
+              "description": "Get user's reviews (paginated)",
+              "params": [
+                "page"
+              ],
+              "responseFields": {
+                "success": "boolean",
+                "items": [
+                  {
+                    "title": [
+                      "id",
+                      "nama",
+                      "typa",
+                      "startYear",
+                      "poster_path_small",
+                      "poster_path"
+                    ],
+                    "content": "string",
+                    "tima": "unix_timestamp"
+                  }
+                ],
+                "page": "number",
+                "total": "number",
+                "hasMore": "boolean"
+              },
+              "notes": "Items have a nested title object. content is the review text. tima is the review timestamp."
+            },
+            "shared": {
+              "description": "Get shared tagged titles",
+              "params": [
+                "page"
+              ]
+            }
+          },
+          "del": {
+            "description": "Remove a title from a user list (watchlist, seenlist, or rated)",
+            "params": [
+              "dowhat",
+              "titleid"
+            ],
+            "dowhatValues": [
+              "watchlist",
+              "seenlist",
+              "rated"
+            ],
+            "notes": "Removes the corresponding tag from the title. Account deletion is handled via the /delete page form, not this endpoint."
+          }
+        }
+      }
+    }
+  },
+  "content": {
+    "description": "Content metadata — types, genres, image config, and streaming provider catalog",
+    "types": [
+      {
+        "key": "free",
+        "label": "Free to Watch Now",
+        "group": "featured"
+      },
+      {
+        "key": "free_tv",
+        "label": "Free TV to Watch Now",
+        "group": "featured"
+      },
+      {
+        "key": "free_movie",
+        "label": "Free Movies to Watch Now",
+        "group": "featured"
+      },
+      {
+        "key": "isnowplaying",
+        "label": "Now Playing in Theaters",
+        "group": "featured"
+      },
+      {
+        "key": "ispopular",
+        "label": "Popular Movies",
+        "group": "featured"
+      },
+      {
+        "key": "istoprated",
+        "label": "Top Rated Movies",
+        "group": "featured"
+      },
+      {
+        "key": "isupcoming",
+        "label": "Upcoming Movies",
+        "group": "featured"
+      },
+      {
+        "key": "trend",
+        "label": "Trending Titles",
+        "group": "featured"
+      },
+      {
+        "key": "video",
+        "label": "Videos",
+        "group": "titleType"
+      },
+      {
+        "key": "movie",
+        "label": "Movies",
+        "group": "titleType"
+      },
+      {
+        "key": "tvMovie",
+        "label": "TV Movies",
+        "group": "titleType"
+      },
+      {
+        "key": "short",
+        "label": "Shorts",
+        "group": "titleType"
+      },
+      {
+        "key": "tvSeries",
+        "label": "TV Series",
+        "group": "titleType"
+      },
+      {
+        "key": "tvMiniSeries",
+        "label": "TV Mini Series",
+        "group": "titleType"
+      },
+      {
+        "key": "tvSpecial",
+        "label": "TV Specials",
+        "group": "titleType"
+      },
+      {
+        "key": "tvShort",
+        "label": "TV Shorts",
+        "group": "titleType"
+      }
+    ],
+    "genres": [
+      "Action",
+      "Adult",
+      "Adventure",
+      "Animation",
+      "Biography",
+      "Comedy",
+      "Crime",
+      "Documentary",
+      "Drama",
+      "Family",
+      "Fantasy",
+      "Film-Noir",
+      "Game-Show",
+      "History",
+      "Horror",
+      "Music",
+      "Musical",
+      "Mystery",
+      "News",
+      "Reality-TV",
+      "Romance",
+      "Sci-Fi",
+      "Short",
+      "Sport",
+      "Talk-Show",
+      "Thriller",
+      "War",
+      "Western"
+    ],
+    "imageBaseUrl": "https://image.tmdb.org/t/p/",
+    "imageSizes": {
+      "posterSmall": "w185",
+      "posterMedium": "w342",
+      "posterLarge": "w500",
+      "posterOriginal": "original",
+      "backdropSmall": "w300",
+      "backdropMedium": "w780",
+      "backdropLarge": "w1280",
+      "backdropOriginal": "original",
+      "profileSmall": "w185",
+      "profileMedium": "w342",
+      "profileLarge": "h632",
+      "profileOriginal": "original"
+    },
+    "watchProviderTypes": [
+      "free",
+      "ads",
+      "sub",
+      "plus",
+      "flatrate",
+      "rent",
+      "buy"
+    ],
+    "videoTypeOrder": [
+      "Teaser",
+      "Trailer",
+      "Clip",
+      "Featurette",
+      "Recap",
+      "Opening Credits",
+      "Behind the Scenes",
+      "Bloopers"
+    ],
+    "providers": [
+      {
+        "source": "aetv",
+        "label": "A&E",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/89/5c/895cb7f9fe23fe3a2f1d74446c9a3cc4.jpg"
+      },
+      {
+        "source": "aetvfree",
+        "label": "A&E",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/89/5c/895cb7f9fe23fe3a2f1d74446c9a3cc4.jpg"
+      },
+      {
+        "source": "angel",
+        "label": "Angel",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/img/static/5abe97cfcccc25b4d4485ea36fb25629.png"
+      },
+      {
+        "source": "appletv",
+        "label": "Apple TV",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/84/c9/84c9177ed0629c0df8afbd21fa24f9de.jpg"
+      },
+      {
+        "source": "archiveorg",
+        "label": "Archive.org",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/temp/aHR0cHM6Ly93d3cucG9kY2hhc2VyLmNv.png"
+      },
+      {
+        "source": "az_acaciatv",
+        "label": "AcaciaTV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/90uY3zG0NQzLvRlK6q2PhNggus5.jpg"
+      },
+      {
+        "source": "az_acorn",
+        "label": "Acorn TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/1wYmvbAuVZz2JnKvYfYN8Qolnb.jpg"
+      },
+      {
+        "source": "az_aetncrimecentral",
+        "label": "A&E Crime Central on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/dfaeddbca049b59ffc48815e63ddea9b.png"
+      },
+      {
+        "source": "az_allrealityus",
+        "label": "All Reality on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/fad6b2450af2f469f6e35a42ab149a4f.png"
+      },
+      {
+        "source": "az_amcplus",
+        "label": "AMC+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/9edKQczyuMmQM1yS520hgmJbcaC.jpg"
+      },
+      {
+        "source": "az_amebatv",
+        "label": "Ameba on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/o1MMI3qWdY78IWNSjqJz34db2sF.jpg"
+      },
+      {
+        "source": "az_appletvus",
+        "label": "Apple TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/mHrYMgnZIp6lgW2aXg7ix9zGOnA.jpg"
+      },
+      {
+        "source": "az_aspireTVus",
+        "label": "aspireTV+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/286811b44853fbdb8ccd32fa7bfff28c.png"
+      },
+      {
+        "source": "az_bbcselect",
+        "label": "BBC Select on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/2934a67a576764dbfedebaa593c4c568.png"
+      },
+      {
+        "source": "az_befit",
+        "label": "BeFiT on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/5cd0466931bf9d7d198ef21f5b18c5eb.png"
+      },
+      {
+        "source": "az_bestevertv",
+        "label": "Best TV Ever on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/9808587706fe39ef720257d3603d4ad9.png"
+      },
+      {
+        "source": "az_bestofbritish",
+        "label": "Best of British Television on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/bccf521432101746f1444ba69279a19a.png"
+      },
+      {
+        "source": "az_bestwesternsever",
+        "label": "Best Westerns Ever on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a61d0560641bceac8ac7840879a7c197.png"
+      },
+      {
+        "source": "az_betplus",
+        "label": "BET+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/5fe58c92bb07e900e5526d04182bb26e.png"
+      },
+      {
+        "source": "az_bfiplayer",
+        "label": "BFI Player Classics on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c62a6bf80f96daf2317d9d097aa77897.png"
+      },
+      {
+        "source": "az_britbox",
+        "label": "BritBox on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a3a9261eaa93ea0461ebca0676e7fce0.png"
+      },
+      {
+        "source": "az_broadwayhd",
+        "label": "BroadwayHD on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b683d61b0a59e1ae737d503d48f188c5.png"
+      },
+      {
+        "source": "az_buy",
+        "label": "Amazon Buy",
+        "viewcost": "buy",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/5NyLm42TmCqCMOZFvH4fcoSNKEW.jpg"
+      },
+      {
+        "source": "az_carnegiehallplusus",
+        "label": "Carnegie Hall+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/bcc602d7a98ab4adaaae92542d59464f.png"
+      },
+      {
+        "source": "az_cbsaacf",
+        "label": "Paramount+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/546482745075d35e34f72862620fb814.png"
+      },
+      {
+        "source": "az_cinemax",
+        "label": "Cinemax on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/65d6225c243e0e72d48cc4e8eb817614.png"
+      },
+      {
+        "source": "az_cineverseus",
+        "label": "Cineverse on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b0f6e26d0d791acf2e89e18df31bc4cf.png"
+      },
+      {
+        "source": "az_cjus",
+        "label": "CJ ENM Selects on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/d11338523fcd9c7d14b1fa3db7e77184.png"
+      },
+      {
+        "source": "az_codacollection",
+        "label": "The Coda Collection on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/1128bfde24912361c578405a926c4a54.png"
+      },
+      {
+        "source": "az_cohen",
+        "label": "Cohen Media Channel on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a793d0a43d3b820fdc8ebfe30da9a71f.png"
+      },
+      {
+        "source": "az_contv",
+        "label": "MIDNIGHT PULP on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/759180222406ee39646e66c6e55360d3.png"
+      },
+      {
+        "source": "az_crunchyrollus",
+        "label": "Crunchyroll on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/pgjz7bzfBq4nFDu8JJDLBoUVAX8.jpg"
+      },
+      {
+        "source": "az_curiositystreamstandard",
+        "label": "Curiosity Stream on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c56edbeba14755409142a5a4c00759ad.png"
+      },
+      {
+        "source": "az_curiosityuniversityus",
+        "label": "Curiosity University on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/1d4745fba9447f119ce124f2c849d043.png"
+      },
+      {
+        "source": "az_dailyburn",
+        "label": "Daily Burn on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/58e726719e93620e986faca93e6a94f1.png"
+      },
+      {
+        "source": "az_daringdocs",
+        "label": "Daring Docs on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/0f0a4f6ab804e3c95b47527ea1ec8172.png"
+      },
+      {
+        "source": "az_daznus",
+        "label": "DAZN on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/340a3984ca7724e3d53d67f9cf78a783.png"
+      },
+      {
+        "source": "az_dekkoo",
+        "label": "Dekkoo on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a147cead53466bd8aaf2fd3fa53ea852.png"
+      },
+      {
+        "source": "az_discoveryplus",
+        "label": "discovery+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/lgudHqEtTOzkMWlpTjU1oUyoUSZ.jpg"
+      },
+      {
+        "source": "az_docclub",
+        "label": "Sundance Now on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/7ce656de670f60adf1f5abf221e5d2e0.png"
+      },
+      {
+        "source": "az_docubay",
+        "label": "Docubay on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/527fccda6457c75cd96b2ded93f8c746.png"
+      },
+      {
+        "source": "az_docuramaFilms",
+        "label": "Docurama on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/2224553e93d21b95fcbc9c54ab4f0129.png"
+      },
+      {
+        "source": "az_dove",
+        "label": "Dove Channel on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b529d66bb6edb1f7fc845958bd1055ef.png"
+      },
+      {
+        "source": "az_dox",
+        "label": "Dox on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/5765f0d551b01b7245e9f877cba8fdac.png"
+      },
+      {
+        "source": "az_echoboom",
+        "label": "Echoboom Sports on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/d7f7ac998e8b5d8eb586da9a7b8791c0.png"
+      },
+      {
+        "source": "az_epix",
+        "label": "MGM+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/d5ed3a4905c4cb9d45d2bc3c2c2d1f85.png"
+      },
+      {
+        "source": "az_erosnow",
+        "label": "Eros Now on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b737703b1ae7750b535435da9b712310.png"
+      },
+      {
+        "source": "az_fandor",
+        "label": "Fandor on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/9c9e0bdcea584374fef9ab80a46004ce.png"
+      },
+      {
+        "source": "az_fearfactory",
+        "label": "Fear Factory on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b810fb2f26f44bfa093e39ee50c2c215.png"
+      },
+      {
+        "source": "az_filmbox",
+        "label": "FilmBox+ Now on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/82d788bd39364978812566995cd37f35.png"
+      },
+      {
+        "source": "az_filmmovementus",
+        "label": "Film Movement Plus on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/42b37c1d73a090ee71495c652ff18740.png"
+      },
+      {
+        "source": "az_flixlatino",
+        "label": "FlixLatino on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b1e98b0d2a6d21aae3adff6ba8ae7cc3.png"
+      },
+      {
+        "source": "az_foodmatters",
+        "label": "Food Matters TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/9a5827420ebf75fcb4aae1f5f2e0908b.png"
+      },
+      {
+        "source": "az_france_channel",
+        "label": "France Channel on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/35e6d24e5d5c031514e725ec0b695966.png"
+      },
+      {
+        "source": "az_fullmoon",
+        "label": "Full Moon on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/bfa87de695c497d08b69abbac94fb165.png"
+      },
+      {
+        "source": "az_fuse",
+        "label": "Fuse+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/3ef760e1e474d42507398404527047e8.png"
+      },
+      {
+        "source": "az_gaia",
+        "label": "Gaia on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/7SOOyT9PP0DMdsCXESdfMqbrFKW.jpg"
+      },
+      {
+        "source": "az_gaiamtv",
+        "label": "Gaiam TV Fit & Yoga on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/cf19ccd906e7552fddf5ebd58135e855.png"
+      },
+      {
+        "source": "az_hallmark",
+        "label": "Hallmark+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/3jKNxpK1q6ogtoCcw0ud8fgwtym.jpg"
+      },
+      {
+        "source": "az_hbomaxus",
+        "label": "HBO Max on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/5AkEgpCNaBP3Fbwd2m1GdQIk0vv.jpg"
+      },
+      {
+        "source": "az_heretv",
+        "label": "Here TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a1669d224908f75d35e2ce13cced51b9.png"
+      },
+      {
+        "source": "az_hidiveus",
+        "label": "HIDIVE on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/d21658ce8709d63514b0475b635f7f9c.png"
+      },
+      {
+        "source": "az_historyvault",
+        "label": "HISTORY Vault on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/f5be08ca1a88a2e9e199f48f60cb9bc2.png"
+      },
+      {
+        "source": "az_hiyah",
+        "label": "Hi-YAH! on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/36da665c47c8c6e1641a3075f943e303.png"
+      },
+      {
+        "source": "az_hopsterus",
+        "label": "Hopster Learning on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/8e0557b6565ebbff0ef1a2dfa2858b86.png"
+      },
+      {
+        "source": "az_indieclub",
+        "label": "Indie Club on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/738d67a745a9e64df2c91a7ac2d51787.png"
+      },
+      {
+        "source": "az_indieflix",
+        "label": "iNDIEFLIX on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/3d7642255aec553f0aff60e75c03452d.png"
+      },
+      {
+        "source": "az_indiepix",
+        "label": "IndiePix Unlimited on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/1230a8f654b59f2e576eac8626c9d072.png"
+      },
+      {
+        "source": "az_insideoutside",
+        "label": "Inside Outside on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/8346e79c5b5825974b0acc1a4aa20c0b.png"
+      },
+      {
+        "source": "az_jedge",
+        "label": "Doki on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/45593782f6ece2cb454ef8431df9bdce.png"
+      },
+      {
+        "source": "az_kcpglobalus",
+        "label": "KOCOWA on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/7e6182d806bb9ea841479819c9adcf87.png"
+      },
+      {
+        "source": "az_kidgenius",
+        "label": "Kartoon Channel on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/eaa07a7802433bd4dd26f7eb968d9de6.png"
+      },
+      {
+        "source": "az_kidstream",
+        "label": "Kidstream on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c7aa21305679bcc1783b1f3da13a58c0.png"
+      },
+      {
+        "source": "az_kinofilmcollectionus",
+        "label": "Kino Film Collection on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/f36e9500956dd94c619aae155b348e9a.png"
+      },
+      {
+        "source": "az_lifetimemovieclub",
+        "label": "Lifetime Movie Club on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c45df7543608c5b1d446800ea166b5b0.png"
+      },
+      {
+        "source": "az_magnoliaselects",
+        "label": "Magnolia Selects on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/7ec96f88cbec7b0895aa03ad403406fe.png"
+      },
+      {
+        "source": "az_mandn",
+        "label": "Monsters and Nightmares on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a5d8f588166ecc375b73ecbc33c14a1e.png"
+      },
+      {
+        "source": "az_marqueetvus",
+        "label": "Marquee TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/93875e283ab9ba315877e2f9919b5929.png"
+      },
+      {
+        "source": "az_masterpiece",
+        "label": "PBS Masterpiece on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c16de13b44a88a8ead2f2d059729a9e1.png"
+      },
+      {
+        "source": "az_maxliveeventsus",
+        "label": "HBO Max on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4517cb5af867961edaba02bf6085318c.png"
+      },
+      {
+        "source": "az_mhzchoice",
+        "label": "MHz Choice on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/50776b2e3542976bbc3ec59609119352.png"
+      },
+      {
+        "source": "az_minnokidsus",
+        "label": "Minno Kids on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/bedc0d62d14192c95498997ea8db4132.png"
+      },
+      {
+        "source": "az_motv",
+        "label": "MyOutdoorTV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/967e60230a762041a693d7478d1473d5.png"
+      },
+      {
+        "source": "az_mubi",
+        "label": "MUBI on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/cb40125406e3d09b604c9fdb7d1d3eef.png"
+      },
+      {
+        "source": "az_newdocclub",
+        "label": "Doc Club on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/7bc4eb54509d726464dbff1790a79cbb.png"
+      },
+      {
+        "source": "az_outside",
+        "label": "Outside TV Features on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/446dbc3604e302c9beb10af99336fd97.png"
+      },
+      {
+        "source": "az_outtvus",
+        "label": "OUTtv on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/18e123f93ed5d727d9422f0cd234e8e6.png"
+      },
+      {
+        "source": "az_paramountpremium",
+        "label": "Paramount+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/7332f84bea98157e88f3f73646e47e5d.png"
+      },
+      {
+        "source": "az_passionflix",
+        "label": "Passion Flix on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c111404df7675dca9b0cca92376411a5.png"
+      },
+      {
+        "source": "az_pbo",
+        "label": "Pinoy Box Office on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4c0c9c425d3e0efb3ec939113733ae5c.png"
+      },
+      {
+        "source": "az_pbsdoc",
+        "label": "PBS Documentaries on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/dmVW0l1FRIR3yY8XSQR5zhavC2U.jpg"
+      },
+      {
+        "source": "az_pbskids",
+        "label": "PBS KIDS on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/3d86c506185b5cb2f58c1ee7df3c5050.png"
+      },
+      {
+        "source": "az_pbsliving",
+        "label": "PBS Living on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/fab6338e8ac0ebcc61ce9d8c839fc673.png"
+      },
+      {
+        "source": "az_peacockus",
+        "label": "Peacock Premium Plus on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/596e0ef80919d44277fb98d2c5ebe85e.png"
+      },
+      {
+        "source": "az_pixl",
+        "label": "PixL on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/2f3a573f56cbba1a2ceebe8c536146b3.png"
+      },
+      {
+        "source": "az_preorder",
+        "label": "Amazon Preorder",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/a0/b3/a0b3c6c2f170517d4182d6aaa3175644.jpg"
+      },
+      {
+        "source": "az_prime",
+        "label": "Amazon Prime Video",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/a0/b3/a0b3c6c2f170517d4182d6aaa3175644.jpg"
+      },
+      {
+        "source": "az_pureflixus1",
+        "label": "Great American Pure Flix on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/86b5595ae61982ad77b06593b0e24be2.png"
+      },
+      {
+        "source": "az_qelloconcerts",
+        "label": "Qello Concerts on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/nRNX3ijGNhKfX9av9wDZK9SUYsq.jpg"
+      },
+      {
+        "source": "az_reelz",
+        "label": "REELZ+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/fde72fc9025171a7c1f0340d07200b93.png"
+      },
+      {
+        "source": "az_rent",
+        "label": "Amazon Rent",
+        "viewcost": "rent",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/5NyLm42TmCqCMOZFvH4fcoSNKEW.jpg"
+      },
+      {
+        "source": "az_revry",
+        "label": "Revry on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/25cf3f7dcf0eec42a0988ecbeeab93a9.png"
+      },
+      {
+        "source": "az_ryanfriends",
+        "label": "Ryan and Friends Plus on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/1ca9f56325c34a3448c9cadc9d55fcf8.png"
+      },
+      {
+        "source": "az_screambox",
+        "label": "Screambox on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a880488080220045dd50a7651b159708.png"
+      },
+      {
+        "source": "az_screenpix",
+        "label": "ScreenPix on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/cc6a09cd2daf63d95de3f721e5c0226a.png"
+      },
+      {
+        "source": "az_sensicalus",
+        "label": "Sensical on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/30ce098545ce6798e9c689b1f088874c.png"
+      },
+      {
+        "source": "az_shortstvus",
+        "label": "Shorts TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4bdc8ed45bdec5434fc3a4a65933f9ef.png"
+      },
+      {
+        "source": "az_shoutfactory",
+        "label": "Shout! TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/ivRp15loTWoVy3eEHALoYEyXI8J.jpg"
+      },
+      {
+        "source": "az_shuddertv",
+        "label": "Shudder on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/86319feb6085a35c0166e6206a1950f4.png"
+      },
+      {
+        "source": "az_spcoreus",
+        "label": "Sony Pictures Core on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/04caffe94871d8b0521372f837c92bc7.png"
+      },
+      {
+        "source": "az_starzSub",
+        "label": "STARZ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/766c1bbef1dc6efe4898968837f358ab.png"
+      },
+      {
+        "source": "az_stingrayclassica",
+        "label": "Stingray Classica on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/b9c0680685e397f77671a3d346a0a0b6.png"
+      },
+      {
+        "source": "az_stingraydjazz",
+        "label": "Stingray Djazz on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/13857715b28d9acf07418d5c0db0609d.png"
+      },
+      {
+        "source": "az_stingraykaraoke",
+        "label": "Stingray Karaoke on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/hhrxkhGheXYIxySqg4RcvO4tywc.jpg"
+      },
+      {
+        "source": "az_stingrayzenlifeus",
+        "label": "ZenLIFE by Stingray on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/e15599d1d353c5f0df976a28404e3281.png"
+      },
+      {
+        "source": "az_strandreleasing",
+        "label": "Strand Releasing on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/5b592921fb9e71f540670e6615c62876.png"
+      },
+      {
+        "source": "az_tastemade",
+        "label": "Tastemade on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c6b35f1ae72e2e64ffd8b22c0b59e957.png"
+      },
+      {
+        "source": "az_theafricachannelus",
+        "label": "Demand Africa on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/dbe77ba2dedb8114db3f7d938ba32445.png"
+      },
+      {
+        "source": "az_thegreatcourses",
+        "label": "The Great Courses Signature Collection on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/78470e289352e08a0366d4707ff87b08.png"
+      },
+      {
+        "source": "az_thegreatcourseslivingus",
+        "label": "The Great Courses Living on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/ee72b393524e96320ad6e8903a3b01a5.png"
+      },
+      {
+        "source": "az_thesurfnetwork",
+        "label": "The Surf Network on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4e5b5f4fc801066862b39eb67be0f195.png"
+      },
+      {
+        "source": "az_toku",
+        "label": "Toku on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/84478115a0bfd93065f5afb005f3ec01.png"
+      },
+      {
+        "source": "az_tribecashortlist",
+        "label": "MovieSphere+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/d3a02f23048cb15db49b18dbfafd0a40.png"
+      },
+      {
+        "source": "az_trueroyalty",
+        "label": "True Royalty on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c9de0df22b86f9d6de180f4d37708a2c.png"
+      },
+      {
+        "source": "az_umc",
+        "label": "ALLBLK on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/c38d37fc55006d9ceb1adeadb133eef5.png"
+      },
+      {
+        "source": "az_upfaithfamily",
+        "label": "UP Faith & Family on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/462c9d0e90427636572fb019de865ddf.png"
+      },
+      {
+        "source": "az_vaporvue",
+        "label": "FUEL TV+ on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4c30f598d8caa2757d69ec1424c0aa1f.png"
+      },
+      {
+        "source": "az_vdpaerus0y42p3p9a56",
+        "label": "AeroCinema on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/e04789ef5ab6a642cd4a0cfa8435514a.png"
+      },
+      {
+        "source": "az_vdpfidusatrhcwdch2v",
+        "label": "FidoTV Channel on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/ec138c7346aa66609a713e7a34270ca6.png"
+      },
+      {
+        "source": "az_vdpkenusty393s34ds3",
+        "label": "Kenneth Copeland Ministries on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4d46f8df5c97b0606a3f3d8d9daa85fd.png"
+      },
+      {
+        "source": "az_vdppokuspdzypnep15k",
+        "label": "Pokémon on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/a43bf9dda73f370ca2d1a4c8cbaf238b.png"
+      },
+      {
+        "source": "az_vdpwatuspt801mb64mm",
+        "label": "Watch it. Kid! on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/cdf425ef7f01628d39fb081eb70c3a1e.png"
+      },
+      {
+        "source": "az_vdpyoguse9vn6wa0s64",
+        "label": "Yoga and Fitness TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/3502fd025b832b059dd8c74520ad7186.png"
+      },
+      {
+        "source": "az_vemoxcine",
+        "label": "Vemox Cine on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/19d0231976ff1f703c995062395f5edd.png"
+      },
+      {
+        "source": "az_viaplayus",
+        "label": "Viaplay on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/93630ec0cf75fc4f7d72586b703284d5.png"
+      },
+      {
+        "source": "az_viewster",
+        "label": "RetroCrush on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/74201c79b3e7b8a21f100f615869586d.png"
+      },
+      {
+        "source": "az_vixplusus",
+        "label": "ViX Premium on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/d9e04a4eab9805366b3b51660ecec27b.png"
+      },
+      {
+        "source": "az_vixus",
+        "label": "ViX Gratis on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/iHQ9I6iKiIAHSg4sAztp9QGYSs4.jpg"
+      },
+      {
+        "source": "az_wag",
+        "label": "Warriors & Gangsters on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/4350c28a460161d98a73a886429c8d74.png"
+      },
+      {
+        "source": "az_wonderprojectus",
+        "label": "Wonder Project on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/de5e7f21fc9df86789afe596506afd4b.png"
+      },
+      {
+        "source": "az_xivetv",
+        "label": "XiveTV Documentaries on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/lqIsrsNpC0rioPLFzI0hbDL5FdF.jpg"
+      },
+      {
+        "source": "az_xltv",
+        "label": "XLTV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/57956486f934dc78f2160f5ca85c310f.png"
+      },
+      {
+        "source": "az_yippeetvus",
+        "label": "Yippee Kids TV on Prime",
+        "viewcost": "plus",
+        "logo": "https://watchwhatwhere.com/img/static/39b3b11d5f61b05b2986a2b7e8e804c2.png"
+      },
+      {
+        "source": "bloodstream",
+        "label": "Bloodstream",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/8562f9d07282bbeb25b1c851b51a8615.png"
+      },
+      {
+        "source": "byutv",
+        "label": "BYUtv",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/84/fc/84fc8295844414c4cbea0ecd4ce75125.jpg"
+      },
+      {
+        "source": "distrotv",
+        "label": "Distro Tv",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/c02ff14604dbc5909c9d7ded90ab65d9.png"
+      },
+      {
+        "source": "fandango",
+        "label": "Fandango At Home",
+        "viewcost": "buy",
+        "logo": "https://watchwhatwhere.com/cachedimages/29/86/29866458f0186f9fd9b9328913e2b177.jpg"
+      },
+      {
+        "source": "fandangofree",
+        "label": "Fandango at Home Free",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/29/86/29866458f0186f9fd9b9328913e2b177.jpg"
+      },
+      {
+        "source": "fawesome",
+        "label": "Fawesome",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/96/1e/961ebcafdaaf01db8a726dc48c94b726.jpg"
+      },
+      {
+        "source": "filmzie",
+        "label": "Filmzie",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/6d/62/6d62247b91db7f601ddf9cba3de3c889.jpg"
+      },
+      {
+        "source": "flimzie",
+        "label": "Filmzie",
+        "viewcost": "",
+        "logo": "https://watchwhatwhere.com/img/static/7df47fe511b552ed6cf2babea7bfe4d2.png"
+      },
+      {
+        "source": "glewed",
+        "label": "Glewed",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/5b0ba395bd33986091e96c34ddafe268.png"
+      },
+      {
+        "source": "hbomax",
+        "label": "HBO Max",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/dd/c4/ddc4fffc5dfcd6bce1d0f6ef55ba249e.jpg"
+      },
+      {
+        "source": "history",
+        "label": "History",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/img/static/b501f43408026907a8ac34eb217afefb.png"
+      },
+      {
+        "source": "hulu",
+        "label": "Hulu",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/99/83/9983c622f7bb68c52b51dd9d5cceb7fd.jpg"
+      },
+      {
+        "source": "kanopy",
+        "label": "Kanopy",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/09/7a/097ac01e2f542bd20c2535057eda3258.jpg"
+      },
+      {
+        "source": "mgmplus",
+        "label": "MGM Plus",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/cd/66/cd66af911de203762e14cc9c85f59015.jpg"
+      },
+      {
+        "source": "mometu",
+        "label": "Mometu",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/f57c9a1baf3251b8f2d3f1d8beaba19a.png"
+      },
+      {
+        "source": "mubi",
+        "label": "Mubi",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/img/static/874df6ac432297d418cb40e0f010c4f7.png"
+      },
+      {
+        "source": "natgeo",
+        "label": "Nat Geo",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/351db83877b19c03471b923fa070083d.png"
+      },
+      {
+        "source": "netflix",
+        "label": "Netflix",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/97/37/97378050333a2e8a6734d5f00ff0f757.jpg"
+      },
+      {
+        "source": "outsideonline",
+        "label": "Outside Online",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/c11de4333e4cfd669778a9d558c791f8.png"
+      },
+      {
+        "source": "paramountplus",
+        "label": "Paramount Plus",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/49/b8/49b85009efbcfd17978c28aba378228e.jpg"
+      },
+      {
+        "source": "pbs",
+        "label": "PBS",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/static/9d7f7efd0d46600ca7f0b55eedf39559.png"
+      },
+      {
+        "source": "peacock",
+        "label": "Peacock Premium",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/08/1a/081a4f7eefab2f81508b5215aac65620.jpg"
+      },
+      {
+        "source": "plex",
+        "label": "Plex",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/c0/96/c0960c866ae72e3b67f800fb3298294b.jpg"
+      },
+      {
+        "source": "pluto",
+        "label": "Pluto TV",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/b8/ea/b8eadc02cd5872edec54cd87b0d377af.jpg"
+      },
+      {
+        "source": "popcornflix",
+        "label": "Popflick",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/static/olvOut34aWUFf1YoOqiqtjidiTK.jpg"
+      },
+      {
+        "source": "reveel",
+        "label": "Reveel",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/79/9c/799c379a4f62f634cffdd4742caa63ed.jpg"
+      },
+      {
+        "source": "roku",
+        "label": "The Roku Channel",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/cachedimages/53/d3/53d36193ff2c78597bc43ee712431602.jpg"
+      },
+      {
+        "source": "rokufree",
+        "label": "The Roku Channel Free",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/53/d3/53d36193ff2c78597bc43ee712431602.jpg"
+      },
+      {
+        "source": "shouttv",
+        "label": "Shout! Factory TV",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/cf/fa/cffa3b0a6149797a056d789aedb8dd15.jpg"
+      },
+      {
+        "source": "sling",
+        "label": "Sling TV",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/img/temp/slingtemplogo.webp"
+      },
+      {
+        "source": "troma",
+        "label": "Troma",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/img/static/8119726cee075bdf68ad4325beb2147d.png"
+      },
+      {
+        "source": "tubi",
+        "label": "Tubi TV",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/d2/9d/d29daa67cd9536c02cab8c96999bbf37.jpg"
+      },
+      {
+        "source": "usa",
+        "label": "USA",
+        "viewcost": "sub",
+        "logo": "https://watchwhatwhere.com/img/static/e17bb3edca01f4e77e9926fe08d6e40f.png"
+      },
+      {
+        "source": "vix",
+        "label": "VIX ",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/00/da/00da0ada73c8e53b2aec35f56208d4ab.jpg"
+      },
+      {
+        "source": "xumo",
+        "label": "Xumo Play",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/2a/72/2a7254c3fb93f8ddb71f32c04720735d.jpg"
+      },
+      {
+        "source": "youtube",
+        "label": "YouTube Free",
+        "viewcost": "free",
+        "logo": "https://watchwhatwhere.com/cachedimages/09/de/09deb338a8fd1dc951a8a8a67c535cd4.jpg"
+      }
+    ]
+  },
+  "pages": {
+    "description": "SPA route patterns. {id} is numeric, {slug} is URL-friendly name, {type} maps to content.types keys, {source} maps to provider source keys.",
+    "intro": "/",
+    "home": "/home",
+    "browse": "/{type}",
+    "title": "/title/{id}-{slug}",
+    "artist": "/artist/{id}-{slug}",
+    "search": "/search/{query}",
+    "provider": "/prov/{source}",
+    "providerList": "/prov",
+    "prodCompany": "/prod/{id}-{slug}",
+    "list": "/list/{hash}",
+    "profile": "/profile",
+    "delete": "/delete",
+    "about": "/about",
+    "contact": "/contact",
+    "privacy": "/privacy",
+    "tos": "/tos",
+    "notes": "Browse and provider pages support genre filtering via URL hash fragment (e.g. /free#Action). List hash is a hex string identifier for shared lists."
+  },
+  "navigation": {
+    "description": "Main navigation bar items and profile page tab sections",
+    "mainNav": [
+      {
+        "label": "Movies",
+        "page": "browse",
+        "type": "movie"
+      },
+      {
+        "label": "TV Shows",
+        "page": "browse",
+        "type": "tvSeries"
+      },
+      {
+        "label": "Free",
+        "page": "browse",
+        "type": "free"
+      },
+      {
+        "label": "Providers",
+        "page": "providerList"
+      }
+    ],
+    "profileSections": [
+      "profile",
+      "watchlist",
+      "seenlist",
+      "rated",
+      "reviews",
+      "lists",
+      "providers"
+    ],
+    "notes": "profileSections order matches tab display order. Each maps to a profile sub-page rendered by ProfilePage."
+  },
+  "features": {
+    "tagging": {
+      "description": "User interaction tags on titles (like, dislike, watchlist, seen, star rating, share)",
+      "requiresAuth": true,
+      "endpoint": "tag",
+      "tags": [
+        "vote",
+        "list",
+        "seen",
+        "star",
+        "share"
+      ],
+      "voteValues": [
+        "up",
+        "down"
+      ],
+      "starMax": 5,
+      "uiActions": {
+        "like": {
+          "tag": "vote",
+          "vote": "up"
+        },
+        "dislike": {
+          "tag": "vote",
+          "vote": "down"
+        },
+        "watchlist": {
+          "tag": "list"
+        },
+        "seen": {
+          "tag": "seen"
+        }
+      },
+      "profileTagMap": {
+        "watchlist": "list",
+        "seenlist": "seen",
+        "rated": "vote"
+      }
+    },
+    "reviews": {
+      "description": "User text reviews for titles",
+      "requiresAuth": true,
+      "endpoint": "review",
+      "maxLength": 5000
+    },
+    "sharing": {
+      "description": "Social sharing from title pages",
+      "popupDefaults": {
+        "scrollbars": "yes"
+      },
+      "platforms": [
+        {
+          "key": "x",
+          "url": "https://twitter.com/intent/tweet",
+          "params": [
+            "text",
+            "hashtags"
+          ],
+          "popup": {
+            "width": 1100,
+            "height": 840
+          }
+        },
+        {
+          "key": "bluesky",
+          "url": "https://bsky.app/intent/compose",
+          "params": [
+            "text"
+          ],
+          "popup": {
+            "width": 600,
+            "height": 500
+          }
+        },
+        {
+          "key": "facebook",
+          "url": "https://www.facebook.com/sharer/sharer.php",
+          "params": [
+            "u"
+          ],
+          "popup": {
+            "width": 700,
+            "height": 500
+          }
+        },
+        {
+          "key": "reddit",
+          "url": "https://www.reddit.com/submit",
+          "params": [
+            "url",
+            "title"
+          ],
+          "popup": {
+            "width": 1100,
+            "height": 840
+          }
+        },
+        {
+          "key": "linkedin",
+          "url": "https://www.linkedin.com/sharing/share-offsite/",
+          "params": [
+            "url"
+          ],
+          "popup": {
+            "width": 700,
+            "height": 600
+          }
+        },
+        {
+          "key": "pinterest",
+          "url": "https://pinterest.com/pin/create/button/",
+          "params": [
+            "url",
+            "media",
+            "description"
+          ],
+          "popup": {
+            "width": 800,
+            "height": 700
+          }
+        },
+        {
+          "key": "whatsapp",
+          "url": "https://wa.me/",
+          "params": [
+            "text"
+          ],
+          "popup": {
+            "width": 800,
+            "height": 600
+          }
+        },
+        {
+          "key": "telegram",
+          "url": "https://t.me/share/url",
+          "params": [
+            "url",
+            "text"
+          ],
+          "popup": {
+            "width": 800,
+            "height": 600
+          }
+        },
+        {
+          "key": "email",
+          "url": "mailto:",
+          "params": [
+            "subject",
+            "body"
+          ],
+          "notes": "Opens native mail client, no popup"
+        },
+        {
+          "key": "tumblr",
+          "url": "https://www.tumblr.com/widgets/share/tool",
+          "params": [
+            "canonicalUrl",
+            "title",
+            "caption"
+          ],
+          "popup": {
+            "width": 600,
+            "height": 500
+          }
+        },
+        {
+          "key": "vk",
+          "url": "https://vk.com/share.php",
+          "params": [
+            "url",
+            "title"
+          ],
+          "popup": {
+            "width": 700,
+            "height": 500
+          }
+        }
+      ]
+    },
+    "customLists": {
+      "description": "User-created shareable title lists",
+      "requiresAuth": true,
+      "endpoint": "userlist",
+      "shareable": true,
+      "privacyValues": [
+        "public",
+        "private"
+      ],
+      "viewEndpoint": "viewlist"
+    },
+    "providerPreferences": {
+      "description": "User streaming provider priority and visibility settings",
+      "requiresAuth": true,
+      "endpoint": "provpref",
+      "statusValues": [
+        "prio",
+        "hide"
+      ],
+      "notes": "prio = prioritize (show first), hide = hidden from results. Default state is show (no preference stored)."
+    }
+  }
+}

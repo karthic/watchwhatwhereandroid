@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Splash screen theme with branding for Android 12+ -->
+    <style name="Theme.WatchWhatWhere.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#0D0D0D</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="windowSplashScreenIconBackgroundColor">#0D0D0D</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_branding</item>
+        <item name="postSplashScreenTheme">@style/Theme.WatchWhatWhere</item>
+    </style>
+</resources>
