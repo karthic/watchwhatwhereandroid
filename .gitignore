@@ -7,3 +7,4 @@ local.properties
 .agent/
 temp/
 .vscode/
+google-services.json
