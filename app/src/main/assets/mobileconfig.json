@@ -712,7 +712,7 @@
       "War",
       "Western"
     ],
-    "imageBaseUrl": "https://image.tmdb.org/t/p/",
+    "imageBaseUrl": "",
     "imageSizes": {
       "posterSmall": "w185",
       "posterMedium": "w342",
