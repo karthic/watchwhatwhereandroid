@@ -10,7 +10,5 @@
     
     <!-- Main app theme -->
     <style name="Theme.WatchWhatWhere" parent="android:Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">@android:color/black</item>
-        <item name="android:navigationBarColor">@android:color/black</item>
     </style>
 </resources>

@@ -25,8 +25,8 @@ android {
         applicationId = "com.watchwhatwhere.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "1.0.4"
+        versionCode = 9
+        versionName = "1.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -67,6 +67,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        jniLibs {
+            useLegacyPackaging = false
+        }
     }
 }
 
@@ -102,7 +105,6 @@ dependencies {
 
     // Coil for images
     implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("com.github.awxkee:avif-coder-coil:2.0.0")
 
     // Browser (Chrome Custom Tabs for OAuth)
     implementation("androidx.browser:browser:1.7.0")

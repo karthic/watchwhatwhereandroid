@@ -36,7 +36,9 @@ data class BrowseUiState(
     val genres: List<String> = emptyList(),
     val selectedGenre: String? = null,
     val isLoadingMore: Boolean = false,
+    val isLoadingEarlier: Boolean = false,
     val canLoadMore: Boolean = true,
+    val canLoadEarlier: Boolean = false,
     val error: Throwable? = null
 )
 
@@ -49,12 +51,43 @@ class BrowseViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(BrowseUiState())
     val uiState: StateFlow<BrowseUiState> = _uiState.asStateFlow()
     
-    private var currentType = "movie"
+    private var currentType = ""
     private var currentOffset = 0
     
+    /** The offset of the first item in our current window of titles */
+    private var windowStartOffset = 0
+    
+    /** Saved scroll position for restoration on back navigation */
+    var savedFirstVisibleItemIndex = 0
+        private set
+    var savedFirstVisibleItemScrollOffset = 0
+        private set
+    
+    /** Whether we've already loaded data for the current type */
+    private var hasLoaded = false
+    
+    private val pageSize: Int
+        get() = configRepository.config.value?.api?.paginationSize ?: 100
+    
+    fun saveScrollPosition(firstVisibleItemIndex: Int, firstVisibleItemScrollOffset: Int) {
+        savedFirstVisibleItemIndex = firstVisibleItemIndex
+        savedFirstVisibleItemScrollOffset = firstVisibleItemScrollOffset
+    }
+    
+    /**
+     * Load the initial page of data for a type.
+     * If already loaded for this type (back navigation), skip.
+     */
     fun load(type: String) {
+        if (hasLoaded && type == currentType) return
+        
         currentType = type
         currentOffset = 0
+        windowStartOffset = 0
+        hasLoaded = true
+        savedFirstVisibleItemIndex = 0
+        savedFirstVisibleItemScrollOffset = 0
+        
         viewModelScope.launch {
             _uiState.value = BrowseUiState(isLoading = true)
             
@@ -63,13 +96,13 @@ class BrowseViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(genres = genres)
             
             // Load titles
-            val pageSize = configRepository.config.value?.api?.paginationSize ?: 100
             repository.getTypes(type)
                 .onSuccess { titles ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         titles = titles,
-                        canLoadMore = titles.size >= pageSize
+                        canLoadMore = titles.size >= pageSize,
+                        canLoadEarlier = false
                     )
                 }
                 .onFailure { e ->
@@ -83,6 +116,9 @@ class BrowseViewModel @Inject constructor(
     
     fun selectGenre(genre: String?) {
         currentOffset = 0
+        windowStartOffset = 0
+        savedFirstVisibleItemIndex = 0
+        savedFirstVisibleItemScrollOffset = 0
         _uiState.value = _uiState.value.copy(
             selectedGenre = genre,
             isLoading = true,
@@ -90,13 +126,13 @@ class BrowseViewModel @Inject constructor(
             titles = emptyList()
         )
         viewModelScope.launch {
-            val pageSize = configRepository.config.value?.api?.paginationSize ?: 100
             repository.getTypes(currentType, genre = genre)
                 .onSuccess { titles ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         titles = titles,
-                        canLoadMore = titles.size >= pageSize
+                        canLoadMore = titles.size >= pageSize,
+                        canLoadEarlier = false
                     )
                 }
                 .onFailure { e ->
@@ -110,7 +146,6 @@ class BrowseViewModel @Inject constructor(
     
     fun loadMore() {
         if (_uiState.value.isLoadingMore || !_uiState.value.canLoadMore) return
-        val pageSize = configRepository.config.value?.api?.paginationSize ?: 100
         currentOffset += pageSize
         _uiState.value = _uiState.value.copy(isLoadingMore = true)
         viewModelScope.launch {
@@ -126,6 +161,35 @@ class BrowseViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         isLoadingMore = false,
                         canLoadMore = false
+                    )
+                }
+        }
+    }
+    
+    /**
+     * Load earlier pages when the user scrolls up near the top of the current window.
+     * Prepends one page before the current windowStartOffset.
+     */
+    fun loadEarlier() {
+        if (_uiState.value.isLoadingEarlier || !_uiState.value.canLoadEarlier || windowStartOffset <= 0) return
+        
+        val earlierOffset = (windowStartOffset - pageSize).coerceAtLeast(0)
+        _uiState.value = _uiState.value.copy(isLoadingEarlier = true)
+        viewModelScope.launch {
+            repository.getTypes(currentType, genre = _uiState.value.selectedGenre, offset = earlierOffset)
+                .onSuccess { titles ->
+                    windowStartOffset = earlierOffset
+                    _uiState.value = _uiState.value.copy(
+                        isLoadingEarlier = false,
+                        titles = titles + _uiState.value.titles,
+                        canLoadEarlier = earlierOffset > 0
+                    )
+                    // Adjust saved scroll position by the number of prepended items
+                    savedFirstVisibleItemIndex += titles.size
+                }
+                .onFailure {
+                    _uiState.value = _uiState.value.copy(
+                        isLoadingEarlier = false
                     )
                 }
         }
@@ -159,19 +223,41 @@ fun BrowseScreen(
     viewModel: BrowseViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val gridState = rememberLazyGridState()
+    val gridState = rememberLazyGridState(
+        initialFirstVisibleItemIndex = viewModel.savedFirstVisibleItemIndex,
+        initialFirstVisibleItemScrollOffset = viewModel.savedFirstVisibleItemScrollOffset
+    )
     var genreExpanded by remember { mutableStateOf(false) }
     
     LaunchedEffect(type) {
         viewModel.load(type)
     }
     
-    // Infinite scroll detection
+    // Save scroll position whenever the user scrolls
+    LaunchedEffect(gridState) {
+        snapshotFlow { 
+            gridState.firstVisibleItemIndex to gridState.firstVisibleItemScrollOffset 
+        }.collect { (index, offset) ->
+            viewModel.saveScrollPosition(index, offset)
+        }
+    }
+    
+    // Infinite scroll detection — load more when nearing the end
     LaunchedEffect(gridState) {
         snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastIndex ->
                 if (lastIndex != null && lastIndex >= uiState.titles.size - 6 && uiState.canLoadMore) {
                     viewModel.loadMore()
+                }
+            }
+    }
+    
+    // Load earlier pages when scrolling up near the top of the window
+    LaunchedEffect(gridState) {
+        snapshotFlow { gridState.firstVisibleItemIndex }
+            .collect { firstIndex ->
+                if (firstIndex < 6 && uiState.canLoadEarlier) {
+                    viewModel.loadEarlier()
                 }
             }
     }

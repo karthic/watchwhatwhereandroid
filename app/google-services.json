@@ -12,7 +12,20 @@
           "package_name": "com.watchwhatwhere.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1062416956606-bqnic83qs3knun983kahmkea8m82u8n4.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1062416956606-8rtb5ruefd72ml87s1lcdkkqsh0keo94.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.watchwhatwhere.app",
+            "certificate_hash": "4ed21bb7c8be9ee4a9758d3e347422f99de9245c"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBYreakSDEjZaD7C4g3zzlhjv7i_cBu10I"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1062416956606-bqnic83qs3knun983kahmkea8m82u8n4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

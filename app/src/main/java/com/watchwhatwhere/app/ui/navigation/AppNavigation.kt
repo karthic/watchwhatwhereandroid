@@ -8,7 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.PlaylistPlay
+import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
 import androidx.compose.material.icons.filled.Tv
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.*
@@ -83,7 +83,7 @@ private sealed class BottomTab(
     object Home : BottomTab(Screen.Home.route, "Home", Icons.Default.Home)
     object Providers : BottomTab(Screen.Providers.route, "Providers", Icons.Default.Tv)
     object LoginSignup : BottomTab(Screen.Login.route, "Login / Signup", Icons.Default.PersonAdd)
-    object Lists : BottomTab(Screen.Lists.route, "Lists", Icons.Default.PlaylistPlay)
+    object Lists : BottomTab(Screen.Lists.route, "Lists", Icons.AutoMirrored.Filled.PlaylistPlay)
     object Account : BottomTab(Screen.Account.route, "Account", Icons.Default.AccountCircle)
     object Disconnected : BottomTab("disconnected", "Disconnected", Icons.Default.WifiOff)
 }

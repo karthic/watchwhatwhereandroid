@@ -17,9 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarHalf
+import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.Visibility
@@ -353,7 +353,7 @@ fun TitleDetailScreen(
                             ) {
                                 AsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(detail.data?.backdropPathSmall ?: detail.data?.backdropPath)
+                                        .data(detail.data?.backdropPathSmall ?: detail.data?.backdropPath ?: detail.data?.posterPath ?: detail.data?.posterPathSmall)
                                         .crossfade(true)
                                         .build(),
                                     contentDescription = null,
@@ -411,7 +411,7 @@ fun TitleDetailScreen(
                                                         starRating >= starValue - 0.5f -> {
                                                             // Half star (left half filled)
                                                             Icon(
-                                                                Icons.Filled.StarHalf,
+                                                                Icons.AutoMirrored.Filled.StarHalf,
                                                                 contentDescription = null,
                                                                 tint = Color.Yellow,
                                                                 modifier = Modifier.size(16.dp)
@@ -1285,7 +1285,7 @@ private fun TitleActionBar(
             
             // Add to List
             ActionButton(
-                icon = Icons.Default.PlaylistAdd,
+                icon = Icons.AutoMirrored.Filled.PlaylistAdd,
                 label = "Share",
                 isActive = tagState.isShared,
                 activeColor = Color(0xFF9C27B0),

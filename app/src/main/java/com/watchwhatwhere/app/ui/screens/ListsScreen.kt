@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.*
@@ -186,6 +188,13 @@ class ListsViewModel @Inject constructor(
     fun deleteList(listId: String) {
         viewModelScope.launch {
             profileRepository.deleteList(listId)
+            loadUserLists(refresh = true)
+        }
+    }
+    
+    fun renameList(listId: String, newName: String) {
+        viewModelScope.launch {
+            profileRepository.renameList(listId, newName)
             loadUserLists(refresh = true)
         }
     }
@@ -400,7 +409,7 @@ private fun ProfileTitleGrid(
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        imageVector = Icons.Default.PlaylistPlay,
+                        imageVector = Icons.AutoMirrored.Filled.PlaylistPlay,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
@@ -954,7 +963,8 @@ private fun CustomListsTab(
                                 viewModel.loadListItems(list.id)
                             },
                             onDelete = { viewModel.deleteList(list.id) },
-                            onSetDefault = { viewModel.setDefaultShareList(list.id) }
+                            onSetDefault = { viewModel.setDefaultShareList(list.id) },
+                            onRename = { newName -> viewModel.renameList(list.id, newName) }
                         )
                     }
                 }
@@ -969,9 +979,11 @@ private fun UserListRow(
     isDefaultShare: Boolean = false,
     onClick: () -> Unit,
     onDelete: () -> Unit,
-    onSetDefault: () -> Unit = {}
+    onSetDefault: () -> Unit = {},
+    onRename: (String) -> Unit = {}
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showRenameDialog by remember { mutableStateOf(false) }
     
     if (showDeleteConfirm) {
         AlertDialog(
@@ -986,6 +998,17 @@ private fun UserListRow(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) { Text("Cancel") }
+            }
+        )
+    }
+    
+    if (showRenameDialog) {
+        RenameListDialog(
+            currentName = list.nama,
+            onDismiss = { showRenameDialog = false },
+            onRename = { newName ->
+                onRename(newName)
+                showRenameDialog = false
             }
         )
     }
@@ -1006,7 +1029,7 @@ private fun UserListRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.PlaylistPlay,
+                imageVector = Icons.AutoMirrored.Filled.PlaylistPlay,
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
                 tint = MaterialTheme.colorScheme.primary
@@ -1036,6 +1059,15 @@ private fun UserListRow(
                 )
             }
             
+            IconButton(onClick = { showRenameDialog = true }) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Rename list",
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            
             IconButton(onClick = { showDeleteConfirm = true }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -1046,6 +1078,38 @@ private fun UserListRow(
             }
         }
     }
+}
+
+@Composable
+private fun RenameListDialog(
+    currentName: String,
+    onDismiss: () -> Unit,
+    onRename: (String) -> Unit
+) {
+    var name by remember { mutableStateOf(currentName) }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Rename List") },
+        text = {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("List Name") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onRename(name) },
+                enabled = name.isNotBlank() && name != currentName
+            ) { Text("Rename") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    )
 }
 
 @Composable
@@ -1104,7 +1168,7 @@ private fun ListDetailSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onDismiss) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Text(
                 text = list.nama,

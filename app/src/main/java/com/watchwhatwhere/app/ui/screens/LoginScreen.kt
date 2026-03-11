@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.watchwhatwhere.app.ui.screens
 
 import android.app.Activity
