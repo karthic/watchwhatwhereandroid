@@ -9,18 +9,18 @@
 </p>
 
 <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=com.watchwhatwhere.app">
+  <a href="https://play.google.com/store/apps/details?id=com.watchwhatwhere.app" target="_blank">
     <img src="https://img.shields.io/badge/Google_Play-Download-green?style=for-the-badge&logo=google-play" alt="Get it on Google Play" />
   </a>
-  <a href="https://watchwhatwhere.com">
+  <a href="https://watchwhatwhere.com" target="_blank">
     <img src="https://img.shields.io/badge/Website-watchwhatwhere.com-blue?style=for-the-badge&logo=google-chrome" alt="Visit Website" />
   </a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android-brightgreen?logo=android" alt="Android" />
-  <img src="https://img.shields.io/badge/Kotlin-2.0-purple?logo=kotlin" alt="Kotlin" />
-  <img src="https://img.shields.io/badge/Jetpack_Compose-latest-4285F4?logo=jetpack-compose" alt="Jetpack Compose" />
+  <img src="https://img.shields.io/badge/Kotlin-2.0.21-purple?logo=kotlin" alt="Kotlin" />
+  <img src="https://img.shields.io/badge/Jetpack_Compose-BOM_2024.12.01-4285F4?logo=jetpack-compose" alt="Jetpack Compose" />
   <img src="https://img.shields.io/badge/License-Apache_2.0-blue" alt="License" />
 </p>
 
@@ -33,8 +33,8 @@
 Browse thousands of movies, TV shows, and mini-series — then instantly see which streaming services carry each title, organized by cost (free, subscription, rent, or buy). No more switching between apps to compare availability.
 
 > **🎬 See it in action:**
-> - **[Download on Google Play](https://play.google.com/store/apps/details?id=com.watchwhatwhere.app)** — Install the app and start discovering.
-> - **[Visit watchwhatwhere.com](https://watchwhatwhere.com)** — Explore the full platform on the web.
+> - **<a href="https://play.google.com/store/apps/details?id=com.watchwhatwhere.app" target="_blank">Download on Google Play</a>** — Install the app and start discovering.
+> - **<a href="https://watchwhatwhere.com" target="_blank">Visit watchwhatwhere.com</a>** — Explore the full platform on the web.
 
 ---
 
@@ -88,15 +88,16 @@ WatchWhatWhere is designed with security and user privacy as a priority:
 
 | Layer | Technology |
 | --- | --- |
-| **Language** | Kotlin 2.0 |
-| **UI Framework** | Jetpack Compose (Material 3) |
-| **Networking** | Retrofit 2.9 + OkHttp 4.12 |
+| **Language** | Kotlin 2.0.21 |
+| **UI Framework** | Jetpack Compose BOM 2024.12.01 (Material 3) |
+| **Networking** | Retrofit 2.9.0 + OkHttp 4.12.0 |
 | **Dependency Injection** | Hilt 2.52 |
-| **Image Loading** | Coil 2.5 (with disk + memory caching) |
-| **Local Persistence** | Room + Custom ResponseCache |
-| **Analytics** | Firebase Analytics |
-| **Auth** | Google Play Services Auth, OAuth 2.0 WebView (Microsoft, Facebook, Discord) |
-| **Build** | Gradle (Kotlin DSL), AGP 8.7, compileSdk 35 |
+| **Image Loading** | Coil 2.5.0 (with 250 MB disk + 25% memory caching) |
+| **Local Persistence** | Room 2.6.1 + Custom ResponseCache |
+| **Serialization** | Kotlinx Serialization 1.6.0 |
+| **Analytics** | Firebase Analytics (BOM 33.7.0) |
+| **Auth** | Google Play Services Auth 21.3.0, OAuth 2.0 WebView (Microsoft, Facebook, Discord) |
+| **Build** | Gradle (Kotlin DSL), AGP 8.7.0, compileSdk 35, targetSdk 35, minSdk 24 |
 
 ---
 
@@ -126,7 +127,7 @@ The app follows a clean **MVVM** pattern with a network-first, cache-fallback da
 ### Prerequisites
 - **Android Studio** Hedgehog (2023.1) or later
 - **JDK 17+**
-- **Android SDK** with `compileSdk 35`
+- **Android SDK** with `compileSdk 35` (minimum SDK 24 / Android 7.0)
 
 ### Build & Run
 
@@ -150,8 +151,8 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 | Resource | URL |
 | --- | --- |
-| **Google Play Store** | [Download WatchWhatWhere](https://play.google.com/store/apps/details?id=com.watchwhatwhere.app) |
-| **Official Website** | [watchwhatwhere.com](https://watchwhatwhere.com) |
+| **Google Play Store** | <a href="https://play.google.com/store/apps/details?id=com.watchwhatwhere.app" target="_blank">Download WatchWhatWhere</a> |
+| **Official Website** | <a href="https://watchwhatwhere.com" target="_blank">watchwhatwhere.com</a> |
 
 ---
 
@@ -176,5 +177,5 @@ limitations under the License.
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://izonewe.com">IZONEWE LLC</a>
+  Made with ❤️ by <a href="https://izonewe.com" target="_blank">IZONEWE LLC</a>
 </p>
