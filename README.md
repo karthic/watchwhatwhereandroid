@@ -133,8 +133,8 @@ The app follows a clean **MVVM** pattern with a network-first, cache-fallback da
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/watchwhatwhere-android.git
-cd watchwhatwhere-android
+git clone https://github.com/karthic/watchwhatwhereandroid.git
+cd watchwhatwhereandroid
 
 # Build the debug APK
 ./gradlew assembleDebug
