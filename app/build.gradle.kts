@@ -8,6 +8,15 @@ plugins {
     kotlin("kapt")
 }
 
+// Auto-copy placeholder google-services.json if the real one doesn't exist
+// This allows fresh clones to build without manual Firebase setup
+val googleServicesFile = file("google-services.json")
+val googleServicesExample = file("google-services.json.example")
+if (!googleServicesFile.exists() && googleServicesExample.exists()) {
+    googleServicesExample.copyTo(googleServicesFile)
+    logger.warn("NOTE: Using placeholder google-services.json — Firebase and Google Sign-In will not function. Replace with your own from the Firebase Console.")
+}
+
 android {
     namespace = "com.watchwhatwhere.app"
     compileSdk = 35
