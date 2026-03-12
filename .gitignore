@@ -15,7 +15,6 @@ proguard-rules.pro
 *.key
 signing.properties
 keystore.properties
-gradle.properties
 captures/
 .externalNativeBuild/
 *.log
