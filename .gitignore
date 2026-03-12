@@ -15,6 +15,7 @@ proguard-rules.pro
 *.key
 signing.properties
 keystore.properties
+google-services.json
 captures/
 .externalNativeBuild/
 *.log
